@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zigarettenzähler</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .hidden {
+            display: none;
+        }
+        .counters {
+            margin-top: 20px;
+        }
+        .counter-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        button {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="login-container">
+        <h2>Anmeldung</h2>
+        <input type="text" id="username" placeholder="Benutzername" required>
+        <input type="password" id="password" placeholder="Passwort" required>
+        <button onclick="login()">Anmelden</button>
+    </div>
+    <div class="container hidden" id="counter-container">
+        <h2>Zigarettenzähler</h2>
+        <input type="text" id="name" placeholder="Name">
+        <button onclick="addName()">Hinzufügen</button>
+        <div class="counters" id="counters"></div>
+    </div>
+    <div class="container hidden" id="admin-container">
+        <h2>Benutzerverwaltung</h2>
+        <input type="text" id="new-username" placeholder="Neuer Benutzername">
+        <input type="password" id="new-password" placeholder="Neues Passwort">
+        <button onclick="addUser()">Benutzer hinzufügen</button>
+        <button onclick="logout()">Abmelden</button>
+    </div>
+    <script>
+        const users = {
+            'Silas': 'FreedomXX11',
+            'admin': 'adminpassword'
+        };
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (users[username] && users[username] === password) {
+                document.getElementById('login-container').classList.add('hidden');
+                if (username === 'admin') {
+                    document.getElementById('admin-container').classList.remove('hidden');
+                } else {
+                    document.getElementById('counter-container').classList.remove('hidden');
+                }
+            } else {
+                alert('Falscher Benutzername oder Passwort');
+            }
+        }
+
+        function addName() {
+            const name = document.getElementById('name').value;
+            if (name.trim() === '') return;
+
+            const counterItem = document.createElement('div');
+            counterItem.className = 'counter-item';
+            counterItem.innerHTML = `
+                <span>${name}</span>
+                <span id="${name}-count">0</span>
+                <button onclick="increment('${name}')">+</button>
+                <button onclick="reset('${name}')">Reset</button>
+            `;
+            document.getElementById('counters').appendChild(counterItem);
+        }
+
+        function increment(name) {
+            const count = document.getElementById(`${name}-count`);
+            count.innerText = parseInt(count.innerText) + 1;
+        }
+
+        function reset(name) {
+            if (confirm('Möchten Sie den Zähler wirklich zurücksetzen?')) {
+                const count = document.getElementById(`${name}-count`);
+                count.innerText = 0;
+            }
+        }
+
+        function addUser() {
+            const newUsername = document.getElementById('new-username').value;
+            const newPassword = document.getElementById('new-password').value;
+
+            if (newUsername.trim() === '' || newPassword.trim() === '') {
+                alert('Bitte geben Sie einen Benutzernamen und ein Passwort ein');
+                return;
+            }
+
+            users[newUsername] = newPassword;
+            alert(`Benutzer ${newUsername} wurde hinzugefügt`);
+        }
+
+        function logout() {
+            document.getElementById('admin-container').classList.add('hidden');
+            document.getElementById('login-container').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
+
